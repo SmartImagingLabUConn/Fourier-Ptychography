@@ -73,7 +73,7 @@ astigx = 0; astigy = 0; % define the astigmatism aberration if it is known or yo
 zn = astigx*gzn(max(m1,n1),2*max(round(NAfily),round(NAfilx)),2,2)+...
      astigy*gzn(max(m1,n1),2*max(round(NAfily),round(NAfilx)),-2,2);
 zn = imresize(zn,[m1,n1]);
-if aberration ~= 0
+if  any(aberration ~= 0,'all')
     fmaskpro = aberration; % pre-calibrated aberrations
 else
     fmaskpro = 1.*double(((N1-(m1+1)/2)/NAfily).^2+((M1-(n1+1)/2)/NAfilx).^2<=1)... % low-pass filter
@@ -91,8 +91,9 @@ himFT = fftshift(fft2(him));
 
 %% main part to optimize estimate of high-res image
 for i = 1:2 % 2 initial iterations to get a rough estimate of high-res image
-    for i3 = 1:numim         
-        kxc=round((n+1)/2-kx(1,i3)/dkx);
+    for i3 = 1:numim
+        % when the image size is even, there will be a half pixel displacement for the cnter. 
+        kxc=round((n+1)/2-kx(1,i3)/dkx);  
         kyc=round((m+1)/2-ky(1,i3)/dky);
         kyl=round(kyc-(m1-1)/2);kyh=round(kyc+(m1-1)/2);
         kxl=round(kxc-(n1-1)/2);kxh=round(kxc+(n1-1)/2);
@@ -118,7 +119,7 @@ PT = fmaskpro;
 for i = 1:loopnum
     for i3 = 1:numim 
         countimg=countimg+1; 
-        kxc=round((n+1)/2-kx(1,i3)/dkx);
+        kxc=round((n+1)/2-kx(1,i3)/dkx);  
         kyc=round((m+1)/2-ky(1,i3)/dky);
         kyl=round(kyc-(m1-1)/2);kyh=round(kyc+(m1-1)/2);
         kxl=round(kxc-(n1-1)/2);kxh=round(kxc+(n1-1)/2);
